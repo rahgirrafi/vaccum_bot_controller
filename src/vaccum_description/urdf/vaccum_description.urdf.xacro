@@ -6,576 +6,575 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:macro name="vaccum" params="parent prefix *origin">
-
-    <link
-      name="base_link">
-      <inertial>
-        <origin
-          xyz="-0.020239 0.00031106 0.034044"
-          rpy="0 0 0" />
-        <mass
-          value="1.4598" />
-        <inertia
-          ixx="0.0019201"
-          ixy="-1.9441E-06"
-          ixz="1.5768E-06"
-          iyy="0.0036049"
-          iyz="-5.9889E-08"
-          izz="0.0047447" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/base_link.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.79608 0.79608 0.79608 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/base_link.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <link
-      name="front_left_wheel">
-      <inertial>
-        <origin
-          xyz="4.2207E-06 4.885E-15 -0.0089401"
-          rpy="0 0 0" />
-        <mass
-          value="0.013528" />
-        <inertia
-          ixx="2.2635E-06"
-          ixy="-7.79E-20"
-          ixz="1.0999E-10"
-          iyy="2.2633E-06"
-          iyz="1.1804E-19"
-          izz="3.9268E-06" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/front_left_wheel.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.79608 0.82353 0.93725 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/front_left_wheel.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="front_left_wheel_joint"
-      type="continuous">
+<link
+    name="base_link">
+    <inertial>
       <origin
-        xyz="0.06336 0.063002 0.0075"
-        rpy="1.5708 0 0" />
-      <parent
-        link="base_link" />
-      <child
-        link="front_left_wheel" />
-      <axis
-        xyz="0 0 -1" />
-    </joint>
-    <link
-      name="front_right_wheel">
-      <inertial>
-        <origin
-          xyz="0.124340591481911 4.74620343027254E-15 0.00894007340577986"
-          rpy="0 0 0" />
-        <mass
-          value="0.0135281025569348" />
-        <inertia
-          ixx="2.26349850351656E-06"
-          ixy="-4.85019556681031E-20"
-          ixz="1.09985013202205E-10"
-          iyy="2.26334994628094E-06"
-          iyz="1.20786707459227E-20"
-          izz="3.9267511636668E-06" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/front_right_wheel.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/front_right_wheel.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="front_right_wheel_joint"
-      type="continuous">
-      <origin
-        xyz="-0.060985 -0.062997 0.0075"
-        rpy="1.5708 0 0" />
-      <parent
-        link="base_link" />
-      <child
-        link="front_right_wheel" />
-      <axis
-        xyz="0 0 1" />
-    </joint>
-    <link
-      name="rear_left_wheel">
-      <inertial>
-        <origin
-          xyz="4.22068515629204E-06 4.75661177112841E-15 -0.00894007340577976"
-          rpy="0 0 0" />
-        <mass
-          value="0.0135281025569348" />
-        <inertia
-          ixx="2.26349850351647E-06"
-          ixy="1.0398033549131E-19"
-          ixz="1.09985013393305E-10"
-          iyy="2.26334994628079E-06"
-          iyz="1.22371024055836E-19"
-          izz="3.9267511636666E-06" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/rear_left_wheel.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/rear_left_wheel.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="rear_left_wheel_joint"
-      type="continuous">
-      <origin
-        xyz="-0.060985 0.063002 0.0075"
-        rpy="1.5708 0 0" />
-      <parent
-        link="base_link" />
-      <child
-        link="rear_left_wheel" />
-      <axis
-        xyz="0 0 -1" />
-    </joint>
-    <link
-      name="rear_right_wheel">
-      <inertial>
-        <origin
-          xyz="-4.2207E-06 4.9925E-15 0.0089401"
-          rpy="0 0 0" />
-        <mass
-          value="0.013528" />
-        <inertia
-          ixx="2.2635E-06"
-          ixy="-8.4853E-20"
-          ixz="1.0999E-10"
-          iyy="2.2633E-06"
-          iyz="1.2044E-21"
-          izz="3.9268E-06" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/rear_right_wheel.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.79608 0.82353 0.93725 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/rear_right_wheel.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="rear_right_wheel_joint"
-      type="continuous">
-      <origin
-        xyz="-0.0609849382460916 -0.0629970469534928 0.00749999999999469"
-        rpy="1.5707963267949 0 0" />
-      <parent
-        link="base_link" />
-      <child
-        link="rear_right_wheel" />
-      <axis
-        xyz="0 0 1" />
-    </joint>
-    <link
-      name="camera">
-      <inertial>
-        <origin
-          xyz="-0.00998796510467402 0.00185487708558293 -1.97498793444439E-06"
-          rpy="0 0 0" />
-        <mass
-          value="0.00251010214351842" />
-        <inertia
-          ixx="1.4088701772609E-07"
-          ixy="4.33759503016402E-09"
-          ixz="-4.63200736869362E-12"
-          iyy="8.82173300651778E-08"
-          iyz="-3.32907116776564E-11"
-          izz="9.33512132066443E-08" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/camera.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/camera.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="camerajoint"
-      type="fixed">
-      <origin
-        xyz="0.10632 0 0.05433"
-        rpy="1.5708 0 0" />
-      <parent
-        link="base_link" />
-      <child
-        link="camera" />
-      <axis
-        xyz="0 0 0" />
-    </joint>
-    <link
-      name="lidar">
-      <inertial>
-        <origin
-          xyz="-0.0051082 0.00096996 8.8966E-08"
-          rpy="0 0 0" />
-        <mass
-          value="0.083344" />
-        <inertia
-          ixx="2.4035E-05"
-          ixy="-1.2606E-06"
-          ixz="-6.5531E-10"
-          iyy="5.1914E-05"
-          iyz="-1.2872E-11"
-          izz="3.3173E-05" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/lidar.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="1 1 1 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/lidar.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="lidar_joint"
-      type="fixed">
-      <origin
-        xyz="-6.0126E-05 0 0.07633"
-        rpy="1.5708 0 1.5708" />
-      <parent
-        link="base_link" />
-      <child
-        link="lidar" />
-      <axis
-        xyz="0 0 0" />
-    </joint>
-    <link
-      name="left_middle_arm">
-      <inertial>
-        <origin
-          xyz="-0.0925422766892284 -0.00809825655008783 -0.00375285653305618"
-          rpy="0 0 0" />
-        <mass
-          value="0.157769108071277" />
-        <inertia
-          ixx="8.59338792255128E-05"
-          ixy="5.40150112353752E-08"
-          ixz="-5.22234310271608E-06"
-          iyy="0.0008635371367084"
-          iyz="3.64966292115922E-09"
-          izz="0.000947374926548457" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/left_middle_arm.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/left_middle_arm.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="left_middle_arm_to_base_joint"
-      type="continuous">
-      <origin
-        xyz="-0.11506 0.095002 0.0275"
-        rpy="-1.5708 0 -3.1416" />
-      <parent
-        link="base_link" />
-      <child
-        link="left_middle_arm" />
-      <axis
-        xyz="0 0 1" />
-    </joint>
-    <link
-      name="left_arm">
-      <inertial>
-        <origin
-          xyz="-0.0460891355319592 0.00846119471020351 -0.0372372836885902"
-          rpy="0 0 0" />
-        <mass
-          value="0.422779689693281" />
-        <inertia
-          ixx="0.000316987827739221"
-          ixy="1.03376966138535E-06"
-          ixz="4.75024296429002E-06"
-          iyy="0.00147823731683187"
-          iyz="-8.75182981843936E-07"
-          izz="0.00162785277980847" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/left_arm.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/left_arm.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="left_arm_joint"
-      type="continuous">
-      <origin
-        xyz="-0.185 0 -0.00749999999999998"
-        rpy="0 0 -3.14159265358979" />
-      <parent
-        link="left_middle_arm" />
-      <child
-        link="left_arm" />
-      <axis
-        xyz="0 0 1" />
-    </joint>
-    <link
-      name="right_middle_arm">
-      <inertial>
-        <origin
-          xyz="0.092542 0.0080983 0.0037529"
-          rpy="0 0 0" />
-        <mass
-          value="0.15777" />
-        <inertia
-          ixx="8.5934E-05"
-          ixy="5.4015E-08"
-          ixz="-5.2223E-06"
-          iyy="0.00086354"
-          iyz="3.6497E-09"
-          izz="0.00094737" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/right_middle_arm.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.79216 0.81961 0.93333 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/right_middle_arm.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="right_middle_arm_to_base_joint"
-      type="continuous">
-      <origin
-        xyz="-0.11506 -0.094998 0.0275"
-        rpy="1.5708 0 0" />
-      <parent
-        link="base_link" />
-      <child
-        link="right_middle_arm" />
-      <axis
-        xyz="0 0 -1" />
-    </joint>
-    <link
-      name="right_arm">
-      <inertial>
-        <origin
-          xyz="-0.0454583873702095 0.00825631237068607 0.0372653811640026"
-          rpy="0 0 0" />
-        <mass
-          value="0.423049934522005" />
-        <inertia
-          ixx="0.000319331188962237"
-          ixy="9.84663688025224E-06"
-          ixz="-6.07454708815754E-06"
-          iyy="0.00148003516092588"
-          iyz="2.43128802520024E-07"
-          izz="0.0016313297726627" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/right_arm.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="$(find vaccum_description)/meshes/right_arm.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="right_arm_joint"
-      type="continuous">
-      <origin
-        xyz="0.185 0 0.0075"
+        xyz="-0.0202391221092078 0.000311059265353616 0.034043509149067"
         rpy="0 0 0" />
-      <parent
-        link="right_middle_arm" />
-      <child
-        link="right_arm" />
-      <axis
-        xyz="0 0 -1" />
-    </joint>
+      <mass
+        value="1.4598354733889" />
+      <inertia
+        ixx="0.00192007821498476"
+        ixy="-1.94405942530578E-06"
+        ixz="1.57675589688721E-06"
+        iyy="0.00360488129502323"
+        iyz="-5.98892206698251E-08"
+        izz="0.00474468281636423" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.796078431372549 0.796078431372549 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="front_left_wheel">
+    <inertial>
+      <origin
+        xyz="4.22068517531154E-06 4.88845075530264E-15 -0.00894007340577974"
+        rpy="0 0 0" />
+      <mass
+        value="0.0135281025569349" />
+      <inertia
+        ixx="2.26349850351649E-06"
+        ixy="-7.77665107692368E-20"
+        ixz="1.09985013388406E-10"
+        iyy="2.26334994628089E-06"
+        iyz="1.18055848485456E-19"
+        izz="3.92675116366668E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/front_left_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/front_left_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="front_left_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.0633598739209753 0.063001550240896 0.00749999999999448"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="front_left_wheel" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="front_right_wheel">
+    <inertial>
+      <origin
+        xyz="-4.22068517547114E-06 4.94743135348585E-15 0.00894007340577982"
+        rpy="0 0 0" />
+      <mass
+        value="0.0135281025569348" />
+      <inertia
+        ixx="2.26349850351656E-06"
+        ixy="-4.85859618837567E-20"
+        ixz="1.09985013202377E-10"
+        iyy="2.26334994628094E-06"
+        iyz="1.20568759894767E-20"
+        izz="3.9267511636668E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/front_right_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/front_right_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="front_right_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.0633598739209944 -0.0629970469534928 0.00749999999999448"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="front_right_wheel" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="rear_left_wheel">
+    <inertial>
+      <origin
+        xyz="4.22068515629204E-06 4.75661177112841E-15 -0.00894007340577976"
+        rpy="0 0 0" />
+      <mass
+        value="0.0135281025569348" />
+      <inertia
+        ixx="2.26349850351647E-06"
+        ixy="1.04197375905782E-19"
+        ixz="1.09985013393397E-10"
+        iyy="2.26334994628079E-06"
+        iyz="1.22432420958387E-19"
+        izz="3.9267511636666E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/rear_left_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/rear_left_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rear_left_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.0609849382460916 0.063001550240896 0.00749999999999468"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="rear_left_wheel" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="rear_right_wheel">
+    <inertial>
+      <origin
+        xyz="-4.22068517533236E-06 4.99253416386125E-15 0.00894007340577981"
+        rpy="0 0 0" />
+      <mass
+        value="0.0135281025569348" />
+      <inertia
+        ixx="2.26349850351662E-06"
+        ixy="-8.48317344768737E-20"
+        ixz="1.09985013201034E-10"
+        iyy="2.26334994628105E-06"
+        iyz="1.13500643816923E-21"
+        izz="3.92675116366695E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/rear_right_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/rear_right_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rear_right_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.0609849382460916 -0.0629970469534928 0.00749999999999469"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="rear_right_wheel" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="camera">
+    <inertial>
+      <origin
+        xyz="-0.00998796510467402 0.00185487708558291 -1.97498793441664E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.00251010214351842" />
+      <inertia
+        ixx="1.4088701772609E-07"
+        ixy="4.33759503016402E-09"
+        ixz="-4.63200736869276E-12"
+        iyy="8.82173300651778E-08"
+        iyz="-3.32907116776558E-11"
+        izz="9.33512132066442E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/camera.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/camera.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="camerajoint"
+    type="fixed">
+    <origin
+      xyz="0.106321052700959 0 0.05433"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="camera" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="lidar">
+    <inertial>
+      <origin
+        xyz="-0.00510824870943824 0.000969960247013471 8.89664782538491E-08"
+        rpy="0 0 0" />
+      <mass
+        value="0.0833443952216257" />
+      <inertia
+        ixx="2.40352145539817E-05"
+        ixy="-1.26063070009359E-06"
+        ixz="-6.55309594766224E-10"
+        iyy="5.1914386977574E-05"
+        iyz="-1.28723507394857E-11"
+        izz="3.31728992367856E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/lidar.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/lidar.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lidar_joint"
+    type="fixed">
+    <origin
+      xyz="-6.01260790150382E-05 0 0.0763300000000001"
+      rpy="1.5707963267949 0 1.5707963267949" />
+    <parent
+      link="base_link" />
+    <child
+      link="lidar" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_middle_arm">
+    <inertial>
+      <origin
+        xyz="-0.0925422766892284 -0.00809825655008783 -0.00375285653305618"
+        rpy="0 0 0" />
+      <mass
+        value="0.157769108071277" />
+      <inertia
+        ixx="8.59338792255129E-05"
+        ixy="5.40150112353681E-08"
+        ixz="-5.22234310271609E-06"
+        iyy="0.0008635371367084"
+        iyz="3.64966292116407E-09"
+        izz="0.000947374926548457" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/left_middle_arm.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/left_middle_arm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_middle_arm_to_base_joint"
+    type="continuous">
+    <origin
+      xyz="-0.115060126079015 0.0950022516437015 0.0275"
+      rpy="-1.5707963267949 0 -3.14159265358979" />
+    <parent
+      link="base_link" />
+    <child
+      link="left_middle_arm" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="left_arm">
+    <inertial>
+      <origin
+        xyz="-0.0460891355319593 0.00846119471020353 -0.0372372836885903"
+        rpy="0 0 0" />
+      <mass
+        value="0.422779689693281" />
+      <inertia
+        ixx="0.000316987827739221"
+        ixy="1.03376966138527E-06"
+        ixz="4.75024296429016E-06"
+        iyy="0.00147823731683187"
+        iyz="-8.75182981843933E-07"
+        izz="0.00162785277980847" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/left_arm.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/left_arm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_arm_joint"
+    type="continuous">
+    <origin
+      xyz="-0.185 0 -0.00749999999999998"
+      rpy="0 0 -3.14159265358979" />
+    <parent
+      link="left_middle_arm" />
+    <child
+      link="left_arm" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="right_middle_arm">
+    <inertial>
+      <origin
+        xyz="0.0925422766892285 0.00809825655008781 0.00375285653305619"
+        rpy="0 0 0" />
+      <mass
+        value="0.157769108071277" />
+      <inertia
+        ixx="8.59338792255128E-05"
+        ixy="5.40150112355311E-08"
+        ixz="-5.22234310271623E-06"
+        iyy="0.0008635371367084"
+        iyz="3.64966292116858E-09"
+        izz="0.000947374926548457" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/right_middle_arm.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/right_middle_arm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_middle_arm_to_base_joint"
+    type="continuous">
+    <origin
+      xyz="-0.115060126079015 -0.0949977483562983 0.0275"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_middle_arm" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="right_arm">
+    <inertial>
+      <origin
+        xyz="-0.0454583873702096 0.00825631237068607 0.0372653811640026"
+        rpy="0 0 0" />
+      <mass
+        value="0.423049934522005" />
+      <inertia
+        ixx="0.000319331188962237"
+        ixy="9.84663688025254E-06"
+        ixz="-6.07454708815743E-06"
+        iyy="0.00148003516092588"
+        iyz="2.43128802519983E-07"
+        izz="0.0016313297726627" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/right_arm.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find vaccum_description)/meshes/right_arm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_arm_joint"
+    type="continuous">
+    <origin
+      xyz="0.185 0 0.0075"
+      rpy="0 0 0" />
+    <parent
+      link="right_middle_arm" />
+    <child
+      link="right_arm" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
   </xacro:macro>
 </robot>
