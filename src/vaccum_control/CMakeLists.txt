@@ -12,13 +12,22 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-
+find_package(trajectory_msgs REQUIRED)
 
 install(DIRECTORY config/
   DESTINATION share/${PROJECT_NAME}/config/
 )
 
 add_executable(VaccumController src/VaccumController.cpp)
+
+ament_target_dependencies(VaccumController
+  std_msgs
+  geometry_msgs
+  rclcpp
+  rclcpp_action
+  control_msgs
+  trajectory_msgs
+)
 target_include_directories(VaccumController PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)

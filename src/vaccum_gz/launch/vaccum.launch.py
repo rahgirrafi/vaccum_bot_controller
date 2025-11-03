@@ -73,7 +73,12 @@ def generate_launch_description():
         executable="spawner",
         arguments=["vaccum_base_controller", "--controller-manager", "/controller_manager"],
     )
-    
+
+    arm_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["arm_controller", "--controller-manager", "/controller_manager"],
+    )
 
     return LaunchDescription([
         bridge,
@@ -82,6 +87,7 @@ def generate_launch_description():
         # control_node,
         joint_state_broadcaster_spawner,
         robot_controller_spawner,
+        arm_controller_spawner,
 
         DeclareLaunchArgument(
             'use_sim_time',

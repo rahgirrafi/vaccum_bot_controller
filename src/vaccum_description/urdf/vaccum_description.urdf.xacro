@@ -98,6 +98,7 @@
       link="front_left_wheel" />
     <axis
       xyz="0 0 -1" />
+      
   </joint>
   <link
     name="front_right_wheel">
@@ -416,6 +417,7 @@
       link="left_middle_arm" />
     <axis
       xyz="0 0 -1" />
+      <limit effort="99.0" velocity="99.0" />
   </joint>
   <link
     name="left_arm">
@@ -469,6 +471,7 @@
       link="left_arm" />
     <axis
       xyz="0 0 -1" />
+      <limit effort="99.0" velocity="99.0" />
   </joint>
   <link
     name="right_middle_arm">
@@ -522,6 +525,7 @@
       link="right_middle_arm" />
     <axis
       xyz="0 0 -1" />
+      <limit effort="99.0" velocity="99.0" />
   </joint>
   <link
     name="right_arm">
@@ -575,6 +579,7 @@
       link="right_arm" />
     <axis
       xyz="0 0 -1" />
+      <limit effort="99.0" velocity="99.0" />
   </joint>
   </xacro:macro>
 </robot>
