@@ -400,7 +400,16 @@
     <axis
       xyz="0 0 0" />
   </joint>
-<gazebo reference="lidar">
+
+  <link name="laser_frame"/>
+
+     <joint name="laser_frame_joint" type="fixed">
+        <parent link="lidar"/>
+        <child link="laser_frame"/>
+        <origin xyz="0 0 0" rpy="1.5707 0 0"/>
+    </joint>
+
+    <gazebo reference="laser_frame">
         <material>Gazebo/Grey</material>
         
         <sensor name="laser" type="gpu_lidar">
@@ -409,7 +418,7 @@
             <visualize>true</visualize>
             <update_rate>10</update_rate>
             <topic>scan</topic>
-            <gz_frame_id>lidar</gz_frame_id>
+            <gz_frame_id>laser_frame</gz_frame_id>
             <lidar>
                 <scan>
                     <horizontal>

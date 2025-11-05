@@ -2,7 +2,8 @@
 <sdf version='1.7'>
   <world name='warehouse'>
     <physics type="ode">
-      <max_step_size>0.003</max_step_size>
+    <update_rate>500</update_rate>
+      <max_step_size>0.005</max_step_size>
       <real_time_factor>1.0</real_time_factor>
     </physics>
     <plugin name='ignition::gazebo::systems::Physics' filename='libignition-gazebo-physics-system.so'/>
