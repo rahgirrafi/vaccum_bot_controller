@@ -68,13 +68,13 @@ void common_result_response(
   common_action_result_code = result.result->error_code;
   switch (result.code) {
     case rclcpp_action::ResultCode::SUCCEEDED:
-      printf("Trajectory execution succeeded ✅\n");
+      printf("Trajectory execution succeeded\n");
       break;
     case rclcpp_action::ResultCode::ABORTED:
-      printf("Trajectory execution aborted ❌\n");
+      printf("Trajectory execution aborted\n");
       return;
     case rclcpp_action::ResultCode::CANCELED:
-      printf("Trajectory execution canceled ⚠️\n");
+      printf("Trajectory execution canceled\n");
       return;
     default:
       printf("Unknown result code\n");
@@ -174,7 +174,7 @@ int main(int argc, char * argv[])
     return 1;
   }
 
-  RCLCPP_INFO(node->get_logger(), "Trajectory execution complete ✅");
+  RCLCPP_INFO(node->get_logger(), "Trajectory execution complete");
   rclcpp::shutdown();
   return 0;
 }

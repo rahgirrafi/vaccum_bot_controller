@@ -12,6 +12,7 @@ def generate_launch_description():
     ign_pkg_share = get_package_share_directory('ros_gz_sim')
     vaccum_desc_pkg_share = get_package_share_directory('vaccum_description')
     control_pkg_share = get_package_share_directory('vaccum_control')
+    vaccum_gz_pkg_share = get_package_share_directory('vaccum_gz')
     gz_args = LaunchConfiguration('gz_args', default='')
 
     gz_sim_launch = PathJoinSubstitution(
@@ -31,13 +32,34 @@ def generate_launch_description():
         output='screen'
     )
 
+    camera_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/image@sensor_msgs/msg/Image[ignition.msgs.Image'],
+        output='screen'
+    )
+
+    camera_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        output='screen'
+    )
+
+    lidar_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/scan@sensor_msgs/msg/LaserScan[ignition.msgs.LaserScan'],
+        output='screen'
+    )
+
 
     gazebo = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
                                        'launch',
                                        'gz_sim.launch.py'])]),
-            launch_arguments=[('gz_args', [gz_args, ' -r -v 1 empty.sdf'])])
+            launch_arguments=[('gz_args', [gz_args, f' -r -v 1 {vaccum_gz_pkg_share}/worlds/warehouse.sdf'])])
 
 
 
@@ -82,6 +104,9 @@ def generate_launch_description():
 
     return LaunchDescription([
         bridge,
+        camera_bridge,
+        camera_info_bridge,
+        lidar_bridge,
         gazebo,
         spawn_entity,
         # control_node,
