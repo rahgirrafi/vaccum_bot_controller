@@ -14,7 +14,9 @@ def generate_launch_description():
     control_pkg_share = get_package_share_directory('vaccum_control')
     vaccum_gz_pkg_share = get_package_share_directory('vaccum_gz')
     gz_args = LaunchConfiguration('gz_args', default='')
-
+    rviz_config_file = PathJoinSubstitution(
+        [vaccum_gz_pkg_share, 'config', 'vaccum_default.rviz']
+    )
     gz_sim_launch = PathJoinSubstitution(
         [ign_pkg_share, 'launch', 'gz_sim.launch.py']
     )
@@ -102,6 +104,15 @@ def generate_launch_description():
         arguments=["arm_controller", "--controller-manager", "/controller_manager"],
     )
 
+    
+
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        arguments=['-d', rviz_config_file],
+        output='screen'
+    )
+
     return LaunchDescription([
         bridge,
         camera_bridge,
@@ -113,6 +124,7 @@ def generate_launch_description():
         joint_state_broadcaster_spawner,
         robot_controller_spawner,
         arm_controller_spawner,
+        rviz,
 
         DeclareLaunchArgument(
             'use_sim_time',
