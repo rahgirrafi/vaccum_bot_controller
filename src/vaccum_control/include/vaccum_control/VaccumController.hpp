@@ -76,9 +76,9 @@ private:
       {
         auto goal_handle = future.get();
         if (!goal_handle) {
-          RCLCPP_ERROR(this->get_logger(), "Goal was rejected 😢");
+          RCLCPP_ERROR(this->get_logger(), "Goal was rejected");
         } else {
-          RCLCPP_INFO(this->get_logger(), "Goal accepted ✅");
+          RCLCPP_INFO(this->get_logger(), "Goal accepted");
         }
       };
 
@@ -95,13 +95,13 @@ private:
       {
         switch (result.code) {
           case rclcpp_action::ResultCode::SUCCEEDED:
-            RCLCPP_INFO(this->get_logger(), "Trajectory execution succeeded ✅");
+            RCLCPP_INFO(this->get_logger(), "Trajectory execution succeeded");
             break;
           case rclcpp_action::ResultCode::ABORTED:
-            RCLCPP_ERROR(this->get_logger(), "Trajectory execution aborted ❌");
+            RCLCPP_ERROR(this->get_logger(), "Trajectory execution aborted");
             break;
           case rclcpp_action::ResultCode::CANCELED:
-            RCLCPP_WARN(this->get_logger(), "Trajectory execution canceled ⚠️");
+            RCLCPP_WARN(this->get_logger(), "Trajectory execution canceled");
             break;
           default:
             RCLCPP_ERROR(this->get_logger(), "Unknown result code");

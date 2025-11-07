@@ -18,7 +18,10 @@ install(DIRECTORY config/
   DESTINATION share/${PROJECT_NAME}/config/
 )
 
-add_executable(VaccumController src/VaccumController.cpp)
+add_executable(VaccumController 
+  src/VaccumClimb.cpp
+  src/VaccumSystem.cpp
+  )
 
 ament_target_dependencies(VaccumController
   std_msgs

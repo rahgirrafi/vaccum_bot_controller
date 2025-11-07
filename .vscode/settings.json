@@ -6,5 +6,6 @@
         "unordered_map": "cpp",
         "unordered_set": "cpp",
         "optional": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "/media/rahgirrafi/Dataset/github/ws_vaccumbot/src/vaccum_control"
 }
