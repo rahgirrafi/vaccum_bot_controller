@@ -9,19 +9,25 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
+
+#include "rclcpp/rclcpp.hpp"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/duration.hpp"
 #include "rclcpp/macros.hpp"
 #include "rclcpp/time.hpp"
+#include "rclcpp/logger.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 
-namespace ros2_control_demo_example_2
+#include "std_msgs/msg/int64_multi_array.hpp"
+#include "geometry_msgs/msg/twist.hpp"
+
+namespace vaccum_control
 {
-class DiffBotSystemHardware : public hardware_interface::SystemInterface
+class VaccumSystem: public hardware_interface::SystemInterface
 {
 public:
-  RCLCPP_SHARED_PTR_DEFINITIONS(DiffBotSystemHardware)
+  RCLCPP_SHARED_PTR_DEFINITIONS(VaccumSystem)
 
   // Initialize the hardware
   hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
@@ -51,11 +57,12 @@ public:
   rclcpp::Clock::SharedPtr get_clock() const { return clock_; }
 
 private:
-
-  rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr enc_sub_;
-  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_pub_;
+    void encoder_counts_callback(const std_msgs::msg::Int64MultiArray::SharedPtr msg);
+    rclcpp::Node::SharedPtr node_;
   
+    rclcpp::Subscription<std_msgs::msg::Int64MultiArray>::SharedPtr enc_sub_;
+    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_pub_;
+
   double hw_start_sec_;
   double hw_stop_sec_;
 
@@ -67,6 +74,7 @@ private:
   double rear_right_wheel_velocity_;
   double front_left_wheel_velocity_;
   double front_right_wheel_velocity_;
+  
   double rear_left_wheel_command_;
   double rear_right_wheel_command_;
   double front_left_wheel_command_;
@@ -80,6 +88,7 @@ private:
   double right_middle_arm_velocity_;
   double left_arm_velocity_;
   double right_arm_velocity_;
+
   double left_middle_arm_command_;
   double right_middle_arm_command_;
   double left_arm_command_;

@@ -1,4 +1,4 @@
-#include "arduino_hardware/arduino_hardware.hpp"
+#include "vaccum_control/VaccumSystem.hpp"
 #include <chrono>
 #include <cmath>
 #include <iomanip>
@@ -9,9 +9,11 @@
 #include <vector>
 
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "std_msgs/msg/int32_multi_array.h"
 #include "rclcpp/rclcpp.hpp"
 
+#define ENCODER_SAMPLE_MS 100
+#define TICKS_PER_REV 1440.0f // placeholder value
+#define WHEEL_RADIUS 0.022f // actual value in meters
         
 namespace vaccum_control
 {
@@ -22,12 +24,12 @@ hardware_interface::CallbackReturn VaccumSystem::on_init(
   if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS) {
     return hardware_interface::CallbackReturn::ERROR;
   }
-  
-  node_ = rclcpp::Node::make_shared("vaccum_system");
-  enc_sub_ = node_->create_subscription<std_msgs::msg::Int32MultiArray>(
+
+  VaccumSystem::node_ = rclcpp::Node::make_shared("vaccum_system");
+  VaccumSystem::enc_sub_ = VaccumSystem::node_->create_subscription<std_msgs::msg::Int64MultiArray>(
     "/encoder_counts", rclcpp::QoS(10),
     std::bind(&VaccumSystem::encoder_counts_callback, this, std::placeholders::_1));
-  cmd_pub_ = node_->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", rclcpp::QoS(10));
+  VaccumSystem::cmd_pub_ = VaccumSystem::node_->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", rclcpp::QoS(10));
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -37,7 +39,12 @@ double last_right1 = 0;
 double last_left2 = 0;
 double last_right2 = 0;
 
-void VaccumSystem::encoder_counts_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg)
+double laft_pos_left1 = 0;
+double laft_pos_right1 = 0;
+double laft_pos_left2 = 0;
+double laft_pos_right2 = 0;
+
+void VaccumSystem::encoder_counts_callback(const std_msgs::msg::Int64MultiArray::SharedPtr msg)
 {
   if (msg->data.size() >= 4) {
     double left1 = static_cast<double>(msg->data[0]);
@@ -63,18 +70,29 @@ void VaccumSystem::encoder_counts_callback(const std_msgs::msg::Int32MultiArray:
     float right_mps1 = right_rps1 * (2.0f * M_PI * WHEEL_RADIUS);
     float left_mps2 = left_rps2 * (2.0f * M_PI * WHEEL_RADIUS);
     float right_mps2 = right_rps2 * (2.0f * M_PI * WHEEL_RADIUS);
+
+    rear_left_wheel_velocity_ = left_mps1;
+    rear_right_wheel_velocity_ = right_mps1;
+    front_left_wheel_velocity_ = left_mps2;
+    front_right_wheel_velocity_ = right_mps2;
+
+    laft_pos_left1 += (dl1 / TICKS_PER_REV) * (2.0f * M_PI * WHEEL_RADIUS);
+    laft_pos_right1 += (dr1 / TICKS_PER_REV) * (2.0f * M_PI * WHEEL_RADIUS);
+    laft_pos_left2 += (dl2 / TICKS_PER_REV) * (2.0f * M_PI * WHEEL_RADIUS);
+    laft_pos_right2 += (dr2 / TICKS_PER_REV) * (2.0f * M_PI * WHEEL_RADIUS);
+
+    rear_left_wheel_position_ = laft_pos_left1;
+    rear_right_wheel_position_ = laft_pos_right1;
+    front_left_wheel_position_ = laft_pos_left2;
+    front_right_wheel_position_ = laft_pos_right2;
+
   }
 }
 
 hardware_interface::CallbackReturn VaccumSystem::on_configure(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(get_logger(), "Configuring hardware");
-  try{
-    
-  } catch (const serial::SerialException& e) {
-    RCLCPP_ERROR(get_logger(), "Error configuring serial port: %s", e.what());
-    return hardware_interface::CallbackReturn::ERROR;
-  }
+ 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -132,7 +150,6 @@ std::vector<hardware_interface::CommandInterface> VaccumSystem::export_command_i
 
 hardware_interface::return_type VaccumSystem::read(const rclcpp::Time &, const rclcpp::Duration &)
 {
-  if (!active_) return hardware_interface::return_type::OK;
 
   rclcpp::spin_some(node_);
   return hardware_interface::return_type::OK;
@@ -140,23 +157,7 @@ hardware_interface::return_type VaccumSystem::read(const rclcpp::Time &, const r
 
 hardware_interface::return_type VaccumSystem::write(const rclcpp::Time &, const rclcpp::Duration &)
 {
-  if (!active_) return hardware_interface::return_type::OK;
-
-  try {
-    if (led_command_ == 1.0) {
-      serr.write("1\n");
-      RCLCPP_INFO(get_logger(), "Sent command to turn LED ON");
-    } else if (led_command_ == 0.0) {
-      serr.write("0\n");
-      RCLCPP_INFO(get_logger(), "Sent command to turn LED OFF");
-    }
-  } catch (const serial::PortNotOpenedException& e) {
-    RCLCPP_ERROR(get_logger(), "Port not open: %s", e.what());
-    return hardware_interface::return_type::ERROR;
-  } catch (const serial::SerialException& e) {
-    RCLCPP_ERROR(get_logger(), "Write failed: %s", e.what());
-    return hardware_interface::return_type::ERROR;
-  }
+  
 
   return hardware_interface::return_type::OK;
 }
@@ -166,5 +167,5 @@ hardware_interface::return_type VaccumSystem::write(const rclcpp::Time &, const 
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-  arduino_hardware::VaccumSystem, hardware_interface::SystemInterface
+  vaccum_control::VaccumSystem, hardware_interface::SystemInterface
 )

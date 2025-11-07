@@ -13,6 +13,9 @@ find_package(rclcpp_action REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
+find_package(hardware_interface REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 
 install(DIRECTORY config/
   DESTINATION share/${PROJECT_NAME}/config/
@@ -30,6 +33,10 @@ ament_target_dependencies(VaccumController
   rclcpp_action
   control_msgs
   trajectory_msgs
+  hardware_interface
+  pluginlib
+  rclcpp
+  rclcpp_lifecycle
 )
 target_include_directories(VaccumController PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

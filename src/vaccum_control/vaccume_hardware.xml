@@ -1,0 +1,9 @@
+<library path="vaccum_control">
+  <class name="vaccum_control/VaccumSystem"
+         type="vaccum_control::VaccumSystem"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Hardware interface for Vaccum System
+    </description>
+  </class>
+</library>

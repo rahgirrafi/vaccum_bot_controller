@@ -38,7 +38,7 @@ vaccum_base_controller:
     enable_odom_tf: true
 
     cmd_vel_timeout: 0.5
-    # publish_limited_velocity: true
+    publish_limited_velocity: true
     velocity_rolling_window_size: 10
 
     # Velocity and acceleration limits
