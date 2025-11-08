@@ -13,17 +13,14 @@
     <ros2_control name="vaccum_robot" type="system">
   <!-- if gazebo then use gazebo ros2 control plugin else use vaccum system hardware interface -->
 
-   <!-- <xacro:if value="${'$(arg use_sim)' == 'false'}"> -->
     <hardware>
       <plugin>vaccum_control/VaccumSystem</plugin>
     </hardware>
-  <!-- </xacro:if> -->
 
-  <!-- <xacro:if value="${'$(arg use_sim)' == 'true'}">
-    <hardware>
+    <!-- <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-    </hardware>
-  </xacro:if> -->
+    </hardware>  -->
+
 
 
  

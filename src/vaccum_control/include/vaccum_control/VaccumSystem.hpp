@@ -19,7 +19,7 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 
-#include "std_msgs/msg/int64_multi_array.hpp"
+#include "std_msgs/msg/float64_multi_array.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 
 namespace vaccum_control
@@ -57,10 +57,10 @@ public:
   rclcpp::Clock::SharedPtr get_clock() const { return clock_; }
 
 private:
-    void encoder_counts_callback(const std_msgs::msg::Int64MultiArray::SharedPtr msg);
+    void encoder_counts_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg);
     rclcpp::Node::SharedPtr node_;
   
-    rclcpp::Subscription<std_msgs::msg::Int64MultiArray>::SharedPtr enc_sub_;
+    rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr enc_sub_;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_pub_;
 
   double hw_start_sec_;
