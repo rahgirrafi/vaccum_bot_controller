@@ -5,6 +5,16 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+# set the same behavior for windows as it is on linux
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+set(THIS_PACKAGE_INCLUDE_DEPENDS
+  hardware_interface
+  pluginlib
+  rclcpp
+  rclcpp_lifecycle
+)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(control_msgs REQUIRED)
@@ -17,16 +27,19 @@ find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 
-install(DIRECTORY config/
-  DESTINATION share/${PROJECT_NAME}/config/
+
+add_library(${PROJECT_NAME} SHARED
+  src/VaccumSystem.cpp
 )
 
-add_executable(VaccumController 
-  src/VaccumClimb.cpp
-  src/VaccumSystem.cpp
-  )
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
-ament_target_dependencies(VaccumController
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+ament_target_dependencies(${PROJECT_NAME} PUBLIC
   std_msgs
   geometry_msgs
   rclcpp
@@ -35,16 +48,36 @@ ament_target_dependencies(VaccumController
   trajectory_msgs
   hardware_interface
   pluginlib
-  rclcpp
   rclcpp_lifecycle
 )
-target_include_directories(VaccumController PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-target_compile_features(VaccumController PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
-install(TARGETS VaccumController
-  DESTINATION lib/${PROJECT_NAME})
+pluginlib_export_plugin_description_file(hardware_interface
+  vaccum_hardware.xml
+)
+
+install(TARGETS ${PROJECT_NAME}
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION include/${PROJECT_NAME}
+)
+
+
+install(DIRECTORY config/
+  DESTINATION share/${PROJECT_NAME}/config/
+)
+
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
+ament_export_dependencies(
+  hardware_interface
+  lifecycle_msgs
+  rclcpp
+  rclcpp_lifecycle
+  rclcpp_components
+  pluginlib
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

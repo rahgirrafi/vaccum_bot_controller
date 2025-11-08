@@ -8,12 +8,26 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:macro name="vaccum_ros2_control" params="name prefix">
+  
 
     <ros2_control name="vaccum_robot" type="system">
-        <hardware>
-            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-        </hardware>  
-    
+  <!-- if gazebo then use gazebo ros2 control plugin else use vaccum system hardware interface -->
+
+   <!-- <xacro:if value="${'$(arg use_sim)' == 'false'}"> -->
+    <hardware>
+      <plugin>vaccum_control/VaccumSystem</plugin>
+    </hardware>
+  <!-- </xacro:if> -->
+
+  <!-- <xacro:if value="${'$(arg use_sim)' == 'true'}">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+  </xacro:if> -->
+
+
+ 
+
       <joint name="rear_left_wheel_joint">
         <command_interface name="velocity"/>
         <state_interface name="velocity"/>

@@ -3,6 +3,7 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from ament_index_python.packages import get_package_share_directory
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.conditions import IfCondition
 import os
 
 def generate_launch_description():
@@ -26,11 +27,13 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_desc}]
     )
 
+
     spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
         arguments=['-topic', 'robot_description', '-name', 'vaccum', '-allow_renaming', 'true', '-x', '0.0', '-y', '0.0', '-z', '0.8'],
-        output='screen'
+        output='screen',
+        condition=IfCondition(LaunchConfiguration('use_sim', default='true'))
     )
 
     ld = LaunchDescription()

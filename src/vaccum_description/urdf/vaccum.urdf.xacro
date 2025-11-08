@@ -5,12 +5,16 @@
     <xacro:include filename="$(find vaccum_description)/urdf/vaccum_description.urdf.xacro"/>
     <xacro:include filename="$(find vaccum_description)/urdf/vaccum.ros2_control.xacro"/>
 
-    <gazebo>
-        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-            <parameters>$(find vaccum_control)/config/controllers.yaml</parameters>
-            <!-- <controller_manager_name>controller_manager</controller_manager_name> -->
-        </plugin>
-    </gazebo>
+    <xacro:arg name="use_sim" default="true"/>
+
+    <xacro:if value="${'$(arg use_sim)' == 'true'}">
+      <gazebo>
+          <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+              <parameters>$(find vaccum_control)/config/controllers.yaml</parameters>
+          </plugin>
+      </gazebo>
+    </xacro:if>
+ 
 
     <xacro:vaccum parent="world" prefix="" >
         <origin xyz="0 0 0" rpy="0 0 0" />

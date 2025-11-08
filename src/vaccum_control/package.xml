@@ -34,5 +34,6 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <ros2_control plugin="${prefix}/vaccum_hardware.xml"/>
   </export>
 </package>

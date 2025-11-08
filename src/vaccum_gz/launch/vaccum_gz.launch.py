@@ -8,15 +8,17 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     ARGUMENTS = [
-    DeclareLaunchArgument('use_sim', default_value='false',
+    DeclareLaunchArgument('use_sim', default_value='true',
                           choices=['true', 'false'],
                           description='Use simulation (Gazebo) or hardware'),
 
 ]
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    ign_pkg_share = get_package_share_directory('ros_gz_sim')
     vaccum_desc_pkg_share = get_package_share_directory('vaccum_description')
-
     control_pkg_share = get_package_share_directory('vaccum_control')
     vaccum_gz_pkg_share = get_package_share_directory('vaccum_gz')
+    gz_args = LaunchConfiguration('gz_args', default='')
     
     declare_use_sim = DeclareLaunchArgument(
         'use_sim',
@@ -24,17 +26,59 @@ def generate_launch_description():
         description='Use simulation (Gazebo) or hardware'
     )
 
-    spawn_entity_launch = PathJoinSubstitution(
-        [vaccum_desc_pkg_share, 'launch', 'spawn.launch.py']
-    )
-    spawn_entity = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(spawn_entity_launch),
-    )
-
     rviz_config_file = PathJoinSubstitution(
         [vaccum_gz_pkg_share, 'config', 'vaccum_default.rviz']
     )
 
+
+    spawn_entity_launch = PathJoinSubstitution(
+        [vaccum_desc_pkg_share, 'launch', 'spawn.launch.py']
+    )
+
+
+    # Bridge
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
+    )
+
+    camera_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/image@sensor_msgs/msg/Image[ignition.msgs.Image'],
+        output='screen'
+    )
+
+    camera_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        output='screen'
+    )
+
+    lidar_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/scan@sensor_msgs/msg/LaserScan[ignition.msgs.LaserScan'],
+        output='screen'
+    )
+
+
+
+    gazebo = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
+                                       'launch',
+                                       'gz_sim.launch.py'])]),
+            launch_arguments=[('gz_args', [gz_args, f' -r -v 1 {vaccum_gz_pkg_share}/worlds/warehouse.sdf'])])
+
+
+
+    spawn_entity = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(spawn_entity_launch),
+    )
 
     controllers = PathJoinSubstitution(
         [control_pkg_share, 'config', 'controllers.yaml']
@@ -45,11 +89,11 @@ def generate_launch_description():
         executable='ros2_control_node',
         parameters=[controllers],
         output='screen',
-        remappings=[
-            ('~/robot_description', '/robot_description')
-        ]
+        
         
     )
+
+
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
@@ -80,8 +124,12 @@ def generate_launch_description():
     ld = LaunchDescription(ARGUMENTS)
 
     ld.add_action(declare_use_sim)
+    ld.add_action(bridge)
+    ld.add_action(camera_bridge)
+    ld.add_action(camera_info_bridge)
+    ld.add_action(lidar_bridge)
+    ld.add_action(gazebo)
     ld.add_action(spawn_entity)
-    ld.add_action(control_node)
     ld.add_action(joint_state_broadcaster_spawner)
     ld.add_action(robot_controller_spawner)
     ld.add_action(arm_controller_spawner)

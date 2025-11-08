@@ -18,9 +18,7 @@
 namespace vaccum_control
 {
 
-hardware_interface::CallbackReturn VaccumSystem::on_init(
-  const hardware_interface::HardwareInfo &info)
-{
+hardware_interface::CallbackReturn VaccumSystem::on_init(const hardware_interface::HardwareInfo &info){
   if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS) {
     return hardware_interface::CallbackReturn::ERROR;
   }
@@ -30,6 +28,9 @@ hardware_interface::CallbackReturn VaccumSystem::on_init(
     "/encoder_counts", rclcpp::QoS(10),
     std::bind(&VaccumSystem::encoder_counts_callback, this, std::placeholders::_1));
   VaccumSystem::cmd_pub_ = VaccumSystem::node_->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", rclcpp::QoS(10));
+    // Initialize member variables to prevent null access
+  logger_ = std::make_shared<rclcpp::Logger>(rclcpp::get_logger("VaccumSystem"));
+  clock_ = std::make_shared<rclcpp::Clock>();
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -117,8 +118,8 @@ std::vector<hardware_interface::StateInterface> VaccumSystem::export_state_inter
   state_interfaces.emplace_back("rear_right_wheel_joint", hardware_interface::HW_IF_POSITION, &rear_right_wheel_position_);
   state_interfaces.emplace_back("front_left_wheel_joint", hardware_interface::HW_IF_POSITION, &front_left_wheel_position_);
   state_interfaces.emplace_back("front_right_wheel_joint", hardware_interface::HW_IF_POSITION, &front_right_wheel_position_);
-  state_interfaces.emplace_back("left_middle_arm_joint", hardware_interface::HW_IF_POSITION, &left_middle_arm_position_);
-  state_interfaces.emplace_back("right_middle_arm_joint", hardware_interface::HW_IF_POSITION, &right_middle_arm_position_);
+  state_interfaces.emplace_back("left_middle_arm_to_base_joint", hardware_interface::HW_IF_POSITION, &left_middle_arm_position_);
+  state_interfaces.emplace_back("right_middle_arm_to_base_joint", hardware_interface::HW_IF_POSITION, &right_middle_arm_position_);
   state_interfaces.emplace_back("left_arm_joint", hardware_interface::HW_IF_POSITION, &left_arm_position_);
   state_interfaces.emplace_back("right_arm_joint", hardware_interface::HW_IF_POSITION, &right_arm_position_);
 
@@ -126,8 +127,8 @@ std::vector<hardware_interface::StateInterface> VaccumSystem::export_state_inter
   state_interfaces.emplace_back("rear_right_wheel_joint", hardware_interface::HW_IF_VELOCITY, &rear_right_wheel_velocity_);
   state_interfaces.emplace_back("front_left_wheel_joint", hardware_interface::HW_IF_VELOCITY, &front_left_wheel_velocity_);
   state_interfaces.emplace_back("front_right_wheel_joint", hardware_interface::HW_IF_VELOCITY, &front_right_wheel_velocity_);
-  state_interfaces.emplace_back("left_middle_arm_joint", hardware_interface::HW_IF_VELOCITY, &left_middle_arm_velocity_);
-  state_interfaces.emplace_back("right_middle_arm_joint", hardware_interface::HW_IF_VELOCITY, &right_middle_arm_velocity_);
+  state_interfaces.emplace_back("left_middle_arm_to_base_joint", hardware_interface::HW_IF_VELOCITY, &left_middle_arm_velocity_);
+  state_interfaces.emplace_back("right_middle_arm_to_base_joint", hardware_interface::HW_IF_VELOCITY, &right_middle_arm_velocity_);
   state_interfaces.emplace_back("left_arm_joint", hardware_interface::HW_IF_VELOCITY, &left_arm_velocity_);
   state_interfaces.emplace_back("right_arm_joint", hardware_interface::HW_IF_VELOCITY, &right_arm_velocity_);
 
@@ -141,24 +142,25 @@ std::vector<hardware_interface::CommandInterface> VaccumSystem::export_command_i
   command_interfaces.emplace_back("rear_right_wheel_joint", hardware_interface::HW_IF_VELOCITY, &rear_right_wheel_command_);
   command_interfaces.emplace_back("front_left_wheel_joint", hardware_interface::HW_IF_VELOCITY, &front_left_wheel_command_);
   command_interfaces.emplace_back("front_right_wheel_joint", hardware_interface::HW_IF_VELOCITY, &front_right_wheel_command_);
-  command_interfaces.emplace_back("left_middle_arm_joint", hardware_interface::HW_IF_VELOCITY, &left_middle_arm_command_);
-  command_interfaces.emplace_back("right_middle_arm_joint", hardware_interface::HW_IF_VELOCITY, &right_middle_arm_command_);
-  command_interfaces.emplace_back("left_arm_joint", hardware_interface::HW_IF_VELOCITY, &left_arm_command_);
-  command_interfaces.emplace_back("right_arm_joint", hardware_interface::HW_IF_VELOCITY, &right_arm_command_);
+  command_interfaces.emplace_back("left_middle_arm_to_base_joint", hardware_interface::HW_IF_POSITION, &left_middle_arm_command_);
+  command_interfaces.emplace_back("right_middle_arm_to_base_joint", hardware_interface::HW_IF_POSITION, &right_middle_arm_command_);
+  command_interfaces.emplace_back("left_arm_joint", hardware_interface::HW_IF_POSITION, &left_arm_command_);
+  command_interfaces.emplace_back("right_arm_joint", hardware_interface::HW_IF_POSITION, &right_arm_command_);
   return command_interfaces;
 }
 
 hardware_interface::return_type VaccumSystem::read(const rclcpp::Time &, const rclcpp::Duration &)
 {
-
-  rclcpp::spin_some(node_);
-  return hardware_interface::return_type::OK;
+    rclcpp::spin_some(VaccumSystem::node_);
+    return hardware_interface::return_type::OK;
 }
 
 hardware_interface::return_type VaccumSystem::write(const rclcpp::Time &, const rclcpp::Duration &)
 {
-  
-
+    auto cmd_msg = geometry_msgs::msg::Twist();
+    cmd_msg.linear.x = (rear_left_wheel_command_ + rear_right_wheel_command_ + front_left_wheel_command_ + front_right_wheel_command_) / 4.0;
+    cmd_msg.angular.z = ((-rear_left_wheel_command_ + rear_right_wheel_command_ - front_left_wheel_command_ + front_right_wheel_command_) / 4.0) / 0.18; // 0.18 is half the distance between wheels
+    cmd_pub_->publish(cmd_msg);
   return hardware_interface::return_type::OK;
 }
 
