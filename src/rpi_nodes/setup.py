@@ -24,7 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'rpi_motor_dir = rpi_nodes.rpi_motor_dir:main'
+            'rpi_motor_dir = rpi_nodes.rpi_motor_dir:main',
+            'keyboard_control = rpi_nodes.keyboard_control:main',
         ],
     },
 )
