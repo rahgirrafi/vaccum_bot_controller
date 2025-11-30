@@ -60,18 +60,7 @@ double left_pos_right2 = 0;
 
 void VaccumSystem::encoder_counts_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
 {
-  // Firmware publishes Float32FixedArray8 with 8 elements:
-  // [0-3]: Motor wheel encoder data (RPS - revolutions per second)
-  // [4-7]: AS5600 arm joint sensor data (degrees and RPM)
-  //
-  // Element mapping:
-  // [0] = rear_left_wheel RPS
-  // [1] = rear_right_wheel RPS  
-  // [2] = front_left_wheel RPS
-  // [3] = front_right_wheel RPS
-  // [4] = left_arm degrees (AS5600 sensor 0)
-  // [5] = left_arm RPM (AS5600 sensor 0)
-  // [6] = right_arm degrees (AS5600 sensor 1)
+
   // [7] = right_arm RPM (AS5600 sensor 1)
   
   if (msg->data.size() >= 8) {
@@ -151,7 +140,6 @@ void VaccumSystem::left_arm_angle_callback(const std_msgs::msg::Float32::SharedP
 {
   // Update left arm position from the angle topic (already in radians)
   left_arm_position_ = static_cast<double>(msg->data);
-  
   // Log periodically for debugging (every ~100 messages)
   static int log_counter_left = 0;
   if (++log_counter_left % 100 == 0) {
@@ -163,7 +151,6 @@ void VaccumSystem::right_arm_angle_callback(const std_msgs::msg::Float32::Shared
 {
   // Update right arm position from the angle topic (already in radians)
   right_arm_position_ = static_cast<double>(msg->data);
-  
   // Log periodically for debugging (every ~100 messages)
   static int log_counter_right = 0;
   if (++log_counter_right % 100 == 0) {

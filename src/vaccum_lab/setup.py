@@ -24,7 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'vaccum_subscriber = vaccum_lab.vaccum_subscriber:main'
+            'vaccum_subscriber = vaccum_lab.vaccum_subscriber:main',
+            'vaccum_climb = vaccum_lab.VaccumClimb:main',
         ],
     },
 )
