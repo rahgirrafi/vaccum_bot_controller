@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'vaccum_lab'
+package_name = 'rpi_nodes'
 
 setup(
     name=package_name,
@@ -13,8 +13,8 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='rahgirrafi',
-    maintainer_email='rahgirrafi@gmail.com',
+    maintainer='vaccum-bot',
+    maintainer_email='vaccum-bot@todo.todo',
     description='TODO: Package description',
     license='TODO: License declaration',
     extras_require={
@@ -24,8 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'vaccum_subscriber = vaccum_lab.vaccum_subscriber:main',
-            'vaccum_climb = vaccum_lab.VaccumClimb:main',
+            'rpi_motor_dir = rpi_nodes.rpi_motor_dir:main',
+            'keyboard_control = rpi_nodes.keyboard_control:main',
         ],
     },
 )

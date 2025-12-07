@@ -86,5 +86,4 @@ def generate_launch_description():
     ld.add_action(robot_controller_spawner)
     ld.add_action(arm_controller_spawner)
     ld.add_action(rviz)
-
     return ld

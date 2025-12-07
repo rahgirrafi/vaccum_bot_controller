@@ -7,12 +7,7 @@ from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
 from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
-    ARGUMENTS = [
-    DeclareLaunchArgument('use_sim', default_value='true',
-                          choices=['true', 'false'],
-                          description='Use simulation (Gazebo) or hardware'),
-
-]
+ 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     ign_pkg_share = get_package_share_directory('ros_gz_sim')
     vaccum_desc_pkg_share = get_package_share_directory('vaccum_description')
@@ -20,11 +15,7 @@ def generate_launch_description():
     vaccum_gz_pkg_share = get_package_share_directory('vaccum_gz')
     gz_args = LaunchConfiguration('gz_args', default='')
     
-    declare_use_sim = DeclareLaunchArgument(
-        'use_sim',
-        default_value='true',
-        description='Use simulation (Gazebo) or hardware'
-    )
+
 
     rviz_config_file = PathJoinSubstitution(
         [vaccum_gz_pkg_share, 'config', 'vaccum_default.rviz']
@@ -121,9 +112,8 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file],
         output='screen'
     )
-    ld = LaunchDescription(ARGUMENTS)
+    ld = LaunchDescription()
 
-    ld.add_action(declare_use_sim)
     ld.add_action(bridge)
     ld.add_action(camera_bridge)
     ld.add_action(camera_info_bridge)
@@ -134,5 +124,4 @@ def generate_launch_description():
     ld.add_action(robot_controller_spawner)
     ld.add_action(arm_controller_spawner)
     ld.add_action(rviz)
-
     return ld

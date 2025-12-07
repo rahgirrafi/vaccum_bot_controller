@@ -1,0 +1,3 @@
+[submodule "src/custom_interfaces"]
+	path = src/custom_interfaces
+	url = https://github.com/rahgirrafi/custom_interfaces.git

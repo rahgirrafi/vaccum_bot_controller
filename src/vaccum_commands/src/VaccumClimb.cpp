@@ -47,14 +47,15 @@ rclcpp_action::ClientGoalHandle<control_msgs::action::FollowJointTrajectory>::Sh
 unsigned int ct_goals_reached = 0;
 
 std::vector<std::vector<double>> desired_goals = {
-  {-1.5,  1.5,  -1.5,  1.5},
-  {-2.1,  2.0,  -2.1,  2.0},
-  { 0.0,  2.0,  -2.1,  2.0},
-  { 0.0,  6.28, -2.1,  2.0},
-  { 2.0,  6.28, -2.1,  2.0},
-  { 2.0,  6.28,  0.0,  2.0},
-  { 2.0,  6.28,  0.0,  6.28},
-  { 0.0,  6.28,  0.0,  6.28}
+  {0.050621,  0.352815,  0.286470,  0.013422},
+  {0.088203,  0.350898,  0.285703,  0.370072},
+  {0.117349,  0.307563,  0.026587, 0.340927},
+  {0.015723,  0.307563,  0.247737, 0.340927},
+  {0.068645,  0.509281,  0.247737,  0.340927},
+  {0.144961,  0.476310,  0.247737,  0.340927},
+  {0.144961,  0.476310,  0.247737,  0.106995},
+  {0.144961,  0.476310,  0.395383,  0.106995},
+  {0.351281,  0.468247,  0.395383,  0.106995},
 };
 
 void common_goal_response(
@@ -100,6 +101,12 @@ void common_feedback(
 {
   std::cout << "Feedback received: desired position[0] = " << feedback->desired.positions[0]
             << ", actual position[0] = " << feedback->actual.positions[0] << std::endl;
+  std::cout << "                    desired position[1] = " << feedback->desired.positions[1]
+            << ", actual position[1] = " << feedback->actual.positions[1] << std::endl;
+  std::cout << "                    desired position[2] = " << feedback->desired.positions[2]
+            << ", actual position[2] = " << feedback->actual.positions[2] << std::endl;
+  std::cout << "                    desired position[3] = " << feedback->desired.positions[3]
+            << ", actual position[3] = " << feedback->actual.positions[3] << std::endl;
 }
 
 // Function to set terminal to non-blocking mode
@@ -134,7 +141,6 @@ void keyboard_monitor_thread()
   std::cout << "\n===========================================\n";
   std::cout << "Press 'c' or 'ESC' to cancel trajectory\n";
   std::cout << "===========================================\n\n";
-  
   while (!cancel_requested && rclcpp::ok()) {
     char ch;
     if (read(STDIN_FILENO, &ch, 1) == 1) {
@@ -202,7 +208,26 @@ int main(int argc, char * argv[])
 
   // Create and populate goal message
   control_msgs::action::FollowJointTrajectory_Goal goal_msg;
-  goal_msg.goal_time_tolerance = rclcpp::Duration::from_seconds(1.0);
+  goal_msg.goal_time_tolerance = rclcpp::Duration::from_seconds(0.0);  // No time tolerance - must complete
+  
+  // Set path and goal tolerances for each joint
+  goal_msg.path_tolerance.resize(joint_names.size());
+  goal_msg.goal_tolerance.resize(joint_names.size());
+  
+  for (size_t i = 0; i < joint_names.size(); ++i) {
+    // Path tolerance during trajectory execution
+    goal_msg.path_tolerance[i].name = joint_names[i];
+    goal_msg.path_tolerance[i].position = 0.1;  // 0.1 rad tolerance during path
+    goal_msg.path_tolerance[i].velocity = 0.0;  // No velocity constraint
+    goal_msg.path_tolerance[i].acceleration = 0.0;  // No acceleration constraint
+    
+    // Goal tolerance at end of trajectory (stricter)
+    goal_msg.goal_tolerance[i].name = joint_names[i];
+    goal_msg.goal_tolerance[i].position = 0.01;  // 0.01 rad (~0.57 deg) at goal
+    goal_msg.goal_tolerance[i].velocity = 0.0;  // No velocity constraint
+    goal_msg.goal_tolerance[i].acceleration = 0.0;  // No acceleration constraint
+  }
+  
   goal_msg.trajectory.joint_names = joint_names;
   goal_msg.trajectory.points = points;
 

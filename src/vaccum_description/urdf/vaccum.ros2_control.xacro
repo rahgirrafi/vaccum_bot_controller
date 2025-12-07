@@ -13,13 +13,13 @@
     <ros2_control name="vaccum_robot" type="system">
   <!-- if gazebo then use gazebo ros2 control plugin else use vaccum system hardware interface -->
 
-    <hardware>
-      <plugin>vaccum_control/VaccumSystem</plugin>
-    </hardware>
-
     <!-- <hardware>
+      <plugin>vaccum_control/VaccumSystem</plugin>
+    </hardware> -->
+
+    <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-    </hardware>  -->
+    </hardware> 
 
 
 
