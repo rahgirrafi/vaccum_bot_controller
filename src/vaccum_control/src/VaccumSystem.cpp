@@ -28,7 +28,7 @@ hardware_interface::CallbackReturn VaccumSystem::on_init(const hardware_interfac
   }
 
   VaccumSystem::node_ = rclcpp::Node::make_shared("vaccum_system");
-  VaccumSystem::enc_sub_ = VaccumSystem::node_->create_subscription<std_msgs::msg::Float64MultiArray>(
+  VaccumSystem::enc_sub_ = VaccumSystem::node_->create_subscription<custom_interfaces::msg::Float32FixedArray8>(
     "/encoder_counts", rclcpp::QoS(10),
     std::bind(&VaccumSystem::encoder_counts_callback, this, std::placeholders::_1));
   

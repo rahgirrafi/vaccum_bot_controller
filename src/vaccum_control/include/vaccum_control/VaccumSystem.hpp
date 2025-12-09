@@ -19,7 +19,7 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 
-#include "std_msgs/msg/float64_multi_array.hpp"
+#include "std_msgs/msg/float32_fixed_array8.hpp"
 #include "std_msgs/msg/float32.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 
@@ -58,13 +58,13 @@ public:
   rclcpp::Clock::SharedPtr get_clock() const { return clock_; }
 
 private:
-    void encoder_counts_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg);
+    void encoder_counts_callback(const custom_interfaces::msg::Float32FixedArray8::SharedPtr msg);
     void left_arm_angle_callback(const std_msgs::msg::Float32::SharedPtr msg);
     void right_arm_angle_callback(const std_msgs::msg::Float32::SharedPtr msg);
     
     rclcpp::Node::SharedPtr node_;
   
-    rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr enc_sub_;
+    rclcpp::Subscription<custom_interfaces::msg::Float32FixedArray8>::SharedPtr enc_sub_;
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr left_arm_angle_sub_;
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr right_arm_angle_sub_;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_pub_;
