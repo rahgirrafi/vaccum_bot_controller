@@ -14,10 +14,6 @@
 #define ENCODER_SAMPLE_MS 100
 #define TICKS_PER_REV 1440.0f // placeholder value
 #define WHEEL_RADIUS 0.022f // actual value in meters
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
         
 namespace vaccum_control
 {
@@ -28,18 +24,9 @@ hardware_interface::CallbackReturn VaccumSystem::on_init(const hardware_interfac
   }
 
   VaccumSystem::node_ = rclcpp::Node::make_shared("vaccum_system");
-  VaccumSystem::enc_sub_ = VaccumSystem::node_->create_subscription<custom_interfaces::msg::Float32FixedArray8>(
+  VaccumSystem::enc_sub_ = VaccumSystem::node_->create_subscription<std_msgs::msg::Float64MultiArray>(
     "/encoder_counts", rclcpp::QoS(10),
     std::bind(&VaccumSystem::encoder_counts_callback, this, std::placeholders::_1));
-  
-  VaccumSystem::left_arm_angle_sub_ = VaccumSystem::node_->create_subscription<std_msgs::msg::Float32>(
-    "/left_arm_angle_rad", rclcpp::QoS(10),
-    std::bind(&VaccumSystem::left_arm_angle_callback, this, std::placeholders::_1));
-  
-  VaccumSystem::right_arm_angle_sub_ = VaccumSystem::node_->create_subscription<std_msgs::msg::Float32>(
-    "/right_arm_angle_rad", rclcpp::QoS(10),
-    std::bind(&VaccumSystem::right_arm_angle_callback, this, std::placeholders::_1));
-
   VaccumSystem::cmd_pub_ = VaccumSystem::node_->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", rclcpp::QoS(10));
     // Initialize member variables to prevent null access
   logger_ = std::make_shared<rclcpp::Logger>(rclcpp::get_logger("VaccumSystem"));
@@ -58,103 +45,31 @@ double left_pos_right1 = 0;
 double left_pos_left2 = 0;
 double left_pos_right2 = 0;
 
-void VaccumSystem::encoder_counts_callback(const custom_interfaces::msg::Float32FixedArray8::SharedPtr msg)
+void VaccumSystem::encoder_counts_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
 {
+  if (msg->data.size() >= 4) {
 
-  // [7] = right_arm RPM (AS5600 sensor 1)
-  
-  if (msg->element.size() >= 8) {
-    // Extract wheel encoder data (RPS - revolutions per second)
-    float rear_left_rps = static_cast<double>(msg->element[0]);
-    float rear_right_rps = static_cast<double>(msg->element[1]);
-    float front_left_rps = static_cast<double>(msg->element[2]);
-    float front_right_rps = static_cast<double>(msg->element[3]);
+    float left_mps1 = static_cast<double>(msg->data[0]);
+    float right_mps1 = static_cast<double>(msg->data[1]);
+    float left_mps2 = static_cast<double>(msg->data[2]);
+    float right_mps2 = static_cast<double>(msg->data[3]);
 
-    // Convert RPS to linear velocity (m/s): v = rps * 2π * radius
-    rear_left_wheel_velocity_ = rear_left_rps * 2.0 * M_PI * WHEEL_RADIUS;
-    rear_right_wheel_velocity_ = rear_right_rps * 2.0 * M_PI * WHEEL_RADIUS;
-    front_left_wheel_velocity_ = front_left_rps * 2.0 * M_PI * WHEEL_RADIUS;
-    front_right_wheel_velocity_ = front_right_rps * 2.0 * M_PI * WHEEL_RADIUS;
-    
-    // Update wheel positions by integrating velocity over time
+    rear_left_wheel_velocity_ = left_mps1;
+    rear_right_wheel_velocity_ = right_mps1;
+    front_left_wheel_velocity_ = left_mps2;
+    front_right_wheel_velocity_ = right_mps2;
     float dt = (float)ENCODER_SAMPLE_MS / 1000.0f;
     
-    // Position in radians = velocity * dt / radius
-    // Or simply: radians = rps * 2π * dt
-    left_pos_left1 += rear_left_rps * 2.0 * M_PI * dt;
-    left_pos_right1 += rear_right_rps * 2.0 * M_PI * dt;
-    left_pos_left2 += front_left_rps * 2.0 * M_PI * dt;
-    left_pos_right2 += front_right_rps * 2.0 * M_PI * dt;
+    left_pos_left1 +=  left_mps1 * dt / WHEEL_RADIUS;
+    left_pos_right1 += right_mps1 *dt  / WHEEL_RADIUS;
+    left_pos_left2 +=  left_mps2 *dt / WHEEL_RADIUS;
+    left_pos_right2 += right_mps2 *dt /  WHEEL_RADIUS;
 
     rear_left_wheel_position_ = left_pos_left1;
     rear_right_wheel_position_ = left_pos_right1;
     front_left_wheel_position_ = left_pos_left2;
     front_right_wheel_position_ = left_pos_right2;
 
-    // Extract AS5600 arm joint sensor data
-    float left_middle_arm_radians = static_cast<double>(msg->element[4]);
-    float left_middle_arm_rpm = static_cast<double>(msg->element[5]);
-    float right_middle_arm_radians = static_cast<double>(msg->element[6]);
-    float right_middle_arm_rpm = static_cast<double>(msg->element[7]);
-
-    // Convert degrees to radians for ROS control
-    left_middle_arm_position_ = left_middle_arm_radians;
-    right_middle_arm_position_ = right_middle_arm_radians;
-
-    // Convert RPM to radians per second: rad/s = rpm * 2π / 60
-    left_middle_arm_velocity_ = left_middle_arm_rpm * 2.0 * M_PI / 60.0;
-    right_middle_arm_velocity_ = right_middle_arm_rpm * 2.0 * M_PI / 60.0;
-
-    // Note: middle arm positions/velocities would need additional sensors
-    // For now, these remain at their default values or can be derived from arm positions
-    
-  } else if (msg->element.size() >= 4) {
-    // Fallback for older firmware that only publishes 4 elements
-    RCLCPP_WARN_THROTTLE(get_logger(), *clock_, 5000, 
-      "Received only %zu encoder elements, expected 8 (wheels + AS5600 data)", msg->element.size());
-    
-    float rear_left_rps = static_cast<double>(msg->element[0]);
-    float rear_right_rps = static_cast<double>(msg->element[1]);
-    float front_left_rps = static_cast<double>(msg->element[2]);
-    float front_right_rps = static_cast<double>(msg->element[3]);
-
-    rear_left_wheel_velocity_ = rear_left_rps * 2.0 * M_PI * WHEEL_RADIUS;
-    rear_right_wheel_velocity_ = rear_right_rps * 2.0 * M_PI * WHEEL_RADIUS;
-    front_left_wheel_velocity_ = front_left_rps * 2.0 * M_PI * WHEEL_RADIUS;
-    front_right_wheel_velocity_ = front_right_rps * 2.0 * M_PI * WHEEL_RADIUS;
-    
-    float dt = (float)ENCODER_SAMPLE_MS / 1000.0f;
-    left_pos_left1 += rear_left_rps * 2.0 * M_PI * dt;
-    left_pos_right1 += rear_right_rps * 2.0 * M_PI * dt;
-    left_pos_left2 += front_left_rps * 2.0 * M_PI * dt;
-    left_pos_right2 += front_right_rps * 2.0 * M_PI * dt;
-
-    rear_left_wheel_position_ = left_pos_left1;
-    rear_right_wheel_position_ = left_pos_right1;
-    front_left_wheel_position_ = left_pos_left2;
-    front_right_wheel_position_ = left_pos_right2;
-  }
-}
-
-void VaccumSystem::left_arm_angle_callback(const std_msgs::msg::Float32::SharedPtr msg)
-{
-  // Update left arm position from the angle topic (already in radians)
-  left_arm_position_ = static_cast<double>(msg->data);
-  // Log periodically for debugging (every ~100 messages)
-  static int log_counter_left = 0;
-  if (++log_counter_left % 100 == 0) {
-    RCLCPP_DEBUG(get_logger(), "Left arm angle received: %.4f rad", left_arm_position_);
-  }
-}
-
-void VaccumSystem::right_arm_angle_callback(const std_msgs::msg::Float32::SharedPtr msg)
-{
-  // Update right arm position from the angle topic (already in radians)
-  right_arm_position_ = static_cast<double>(msg->data);
-  // Log periodically for debugging (every ~100 messages)
-  static int log_counter_right = 0;
-  if (++log_counter_right % 100 == 0) {
-    RCLCPP_DEBUG(get_logger(), "Right arm angle received: %.4f rad", right_arm_position_);
   }
 }
 
