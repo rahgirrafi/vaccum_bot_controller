@@ -16,6 +16,7 @@ find_package(trajectory_msgs REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(custom_interfaces REQUIRED)
 add_executable(VaccumClimb src/VaccumClimb.cpp)
 target_include_directories(VaccumClimb PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -30,6 +31,7 @@ ament_target_dependencies(VaccumClimb
   geometry_msgs
   trajectory_msgs
   control_msgs
+  custom_interfaces
 )
 
 install(TARGETS VaccumClimb

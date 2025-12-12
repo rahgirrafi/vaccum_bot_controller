@@ -26,6 +26,7 @@ find_package(trajectory_msgs REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(custom_interfaces REQUIRED)
 
 
 add_library(${PROJECT_NAME} SHARED
@@ -49,6 +50,7 @@ ament_target_dependencies(${PROJECT_NAME} PUBLIC
   hardware_interface
   pluginlib
   rclcpp_lifecycle
+  custom_interfaces
 )
 
 pluginlib_export_plugin_description_file(hardware_interface

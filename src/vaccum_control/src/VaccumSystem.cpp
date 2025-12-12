@@ -28,7 +28,7 @@ hardware_interface::CallbackReturn VaccumSystem::on_init(const hardware_interfac
   }
 
   VaccumSystem::node_ = rclcpp::Node::make_shared("vaccum_system");
-  VaccumSystem::enc_sub_ = VaccumSystem::node_->create_subscription<std_msgs::msg::Float64MultiArray>(
+  VaccumSystem::enc_sub_ = VaccumSystem::node_->create_subscription<custom_interfaces::msg::Float32FixedArray8>(
     "/encoder_counts", rclcpp::QoS(10),
     std::bind(&VaccumSystem::encoder_counts_callback, this, std::placeholders::_1));
   
@@ -58,17 +58,17 @@ double left_pos_right1 = 0;
 double left_pos_left2 = 0;
 double left_pos_right2 = 0;
 
-void VaccumSystem::encoder_counts_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
+void VaccumSystem::encoder_counts_callback(const custom_interfaces::msg::Float32FixedArray8::SharedPtr msg)
 {
 
   // [7] = right_arm RPM (AS5600 sensor 1)
   
-  if (msg->data.size() >= 8) {
+  if (msg->element.size() >= 8) {
     // Extract wheel encoder data (RPS - revolutions per second)
-    float rear_left_rps = static_cast<double>(msg->data[0]);
-    float rear_right_rps = static_cast<double>(msg->data[1]);
-    float front_left_rps = static_cast<double>(msg->data[2]);
-    float front_right_rps = static_cast<double>(msg->data[3]);
+    float rear_left_rps = static_cast<double>(msg->element[0]);
+    float rear_right_rps = static_cast<double>(msg->element[1]);
+    float front_left_rps = static_cast<double>(msg->element[2]);
+    float front_right_rps = static_cast<double>(msg->element[3]);
 
     // Convert RPS to linear velocity (m/s): v = rps * 2π * radius
     rear_left_wheel_velocity_ = rear_left_rps * 2.0 * M_PI * WHEEL_RADIUS;
@@ -92,10 +92,10 @@ void VaccumSystem::encoder_counts_callback(const std_msgs::msg::Float64MultiArra
     front_right_wheel_position_ = left_pos_right2;
 
     // Extract AS5600 arm joint sensor data
-    float left_middle_arm_radians = static_cast<double>(msg->data[4]);
-    float left_middle_arm_rpm = static_cast<double>(msg->data[5]);
-    float right_middle_arm_radians = static_cast<double>(msg->data[6]);
-    float right_middle_arm_rpm = static_cast<double>(msg->data[7]);
+    float left_middle_arm_radians = static_cast<double>(msg->element[4]);
+    float left_middle_arm_rpm = static_cast<double>(msg->element[5]);
+    float right_middle_arm_radians = static_cast<double>(msg->element[6]);
+    float right_middle_arm_rpm = static_cast<double>(msg->element[7]);
 
     // Convert degrees to radians for ROS control
     left_middle_arm_position_ = left_middle_arm_radians;
@@ -108,15 +108,15 @@ void VaccumSystem::encoder_counts_callback(const std_msgs::msg::Float64MultiArra
     // Note: middle arm positions/velocities would need additional sensors
     // For now, these remain at their default values or can be derived from arm positions
     
-  } else if (msg->data.size() >= 4) {
+  } else if (msg->element.size() >= 4) {
     // Fallback for older firmware that only publishes 4 elements
     RCLCPP_WARN_THROTTLE(get_logger(), *clock_, 5000, 
-      "Received only %zu encoder elements, expected 8 (wheels + AS5600 data)", msg->data.size());
+      "Received only %zu encoder elements, expected 8 (wheels + AS5600 data)", msg->element.size());
     
-    float rear_left_rps = static_cast<double>(msg->data[0]);
-    float rear_right_rps = static_cast<double>(msg->data[1]);
-    float front_left_rps = static_cast<double>(msg->data[2]);
-    float front_right_rps = static_cast<double>(msg->data[3]);
+    float rear_left_rps = static_cast<double>(msg->element[0]);
+    float rear_right_rps = static_cast<double>(msg->element[1]);
+    float front_left_rps = static_cast<double>(msg->element[2]);
+    float front_right_rps = static_cast<double>(msg->element[3]);
 
     rear_left_wheel_velocity_ = rear_left_rps * 2.0 * M_PI * WHEEL_RADIUS;
     rear_right_wheel_velocity_ = rear_right_rps * 2.0 * M_PI * WHEEL_RADIUS;

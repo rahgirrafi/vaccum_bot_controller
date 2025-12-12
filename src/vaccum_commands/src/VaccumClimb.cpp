@@ -28,25 +28,28 @@
 #include <control_msgs/action/follow_joint_trajectory.hpp>
 #include <trajectory_msgs/msg/joint_trajectory_point.hpp>
 #include <action_msgs/srv/cancel_goal.hpp>
+#include "custom_interfaces/msg/float32_fixed_array4.hpp"
 
 using namespace std::chrono_literals;
 
 std::shared_ptr<rclcpp::Node> node;
+rclcpp::Publisher<custom_interfaces::msg::Float32FixedArray4>::SharedPtr feedback_publisher;
 bool common_goal_accepted = false;
 rclcpp_action::ResultCode common_resultcode = rclcpp_action::ResultCode::UNKNOWN;
 int common_action_result_code = control_msgs::action::FollowJointTrajectory_Result::SUCCESSFUL;
 std::atomic<bool> cancel_requested(false);
 rclcpp_action::ClientGoalHandle<control_msgs::action::FollowJointTrajectory>::SharedPtr current_goal_handle;
 
-#define LEFT_ARM_HOME_POSITION 0.45942 //radian
-#define LEFT_ARM_HOME_POSITION_BODY 0.45942 //radian
-#define RIGHT_ARM_HOME_POSITION 0.69182 //radian
-#define RIGHT_ARM_HOME_POSITION_BODY 0.69182 //radian
+#define LEFT_ARM_HOME_POSITION 0.0 //radian
+#define LEFT_ARM_HOME_POSITION_BODY 0.45444 //radian
+#define RIGHT_ARM_HOME_POSITION 0.273048//radian
+#define RIGHT_ARM_HOME_POSITION_BODY 0.666515 //radian
 
 // Track goals reached for each joint position set
 unsigned int ct_goals_reached = 0;
 
 std::vector<std::vector<double>> desired_goals = {
+  {LEFT_ARM_HOME_POSITION, LEFT_ARM_HOME_POSITION_BODY, RIGHT_ARM_HOME_POSITION, RIGHT_ARM_HOME_POSITION_BODY},
   {0.050621,  0.352815,  0.286470,  0.013422},
   {0.088203,  0.350898,  0.285703,  0.370072},
   {0.117349,  0.307563,  0.026587, 0.340927},
@@ -100,14 +103,27 @@ void common_feedback(
   const std::shared_ptr<const control_msgs::action::FollowJointTrajectory::Feedback> feedback)
 {
   std::cout << "Feedback received: desired position[0] = " << feedback->desired.positions[0]
-            << ", actual position[0] = " << feedback->actual.positions[0] << std::endl;
+            << ", actual position[0] = " << feedback->actual.positions[0] 
+            << ", ERROR[0] = " << feedback->error.positions[0] << std::endl;
   std::cout << "                    desired position[1] = " << feedback->desired.positions[1]
-            << ", actual position[1] = " << feedback->actual.positions[1] << std::endl;
+            << ", actual position[1] = " << feedback->actual.positions[1] 
+            << ", ERROR[1] = " << feedback->error.positions[1] << std::endl;
   std::cout << "                    desired position[2] = " << feedback->desired.positions[2]
-            << ", actual position[2] = " << feedback->actual.positions[2] << std::endl;
+            << ", actual position[2] = " << feedback->actual.positions[2] 
+            << ", ERROR[2] = " << feedback->error.positions[2] << std::endl;
   std::cout << "                    desired position[3] = " << feedback->desired.positions[3]
-            << ", actual position[3] = " << feedback->actual.positions[3] << std::endl;
+            << ", actual position[3] = " << feedback->actual.positions[3] 
+            << ", ERROR[3] = " << feedback->error.positions[3] << std::endl << std::endl;
+  // Publish error positions
+  if (feedback_publisher) {
+    custom_interfaces::msg::Float32FixedArray4 error_msg;
+    for (size_t i = 0; i < 4; ++i) {
+      error_msg.element[i] = static_cast<float>(feedback->error.positions[i]);
+    }
+    feedback_publisher->publish(error_msg);
+  }
 }
+          
 
 // Function to set terminal to non-blocking mode
 void set_nonblocking_input()
@@ -161,6 +177,8 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
   node = std::make_shared<rclcpp::Node>("arm_trajectory_action_client");
   RCLCPP_INFO(node->get_logger(), "Node created");
+
+  feedback_publisher = node->create_publisher<custom_interfaces::msg::Float32FixedArray4>("/feedback", 10);
 
   // Create action client
   auto action_client = rclcpp_action::create_client<control_msgs::action::FollowJointTrajectory>(
@@ -217,13 +235,13 @@ int main(int argc, char * argv[])
   for (size_t i = 0; i < joint_names.size(); ++i) {
     // Path tolerance during trajectory execution
     goal_msg.path_tolerance[i].name = joint_names[i];
-    goal_msg.path_tolerance[i].position = 0.1;  // 0.1 rad tolerance during path
+    goal_msg.path_tolerance[i].position = 5;  // 5 rad tolerance during path
     goal_msg.path_tolerance[i].velocity = 0.0;  // No velocity constraint
     goal_msg.path_tolerance[i].acceleration = 0.0;  // No acceleration constraint
     
     // Goal tolerance at end of trajectory (stricter)
     goal_msg.goal_tolerance[i].name = joint_names[i];
-    goal_msg.goal_tolerance[i].position = 0.01;  // 0.01 rad (~0.57 deg) at goal
+    goal_msg.goal_tolerance[i].position = 0.00;  // 0.01 rad (~0.57 deg) at goal
     goal_msg.goal_tolerance[i].velocity = 0.0;  // No velocity constraint
     goal_msg.goal_tolerance[i].acceleration = 0.0;  // No acceleration constraint
   }
