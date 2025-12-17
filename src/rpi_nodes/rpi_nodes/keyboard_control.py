@@ -50,13 +50,13 @@ class KeyboardControlNode(Node):
             's': {'topic': 'group2', 'value': 0},
             'x': {'topic': 'group2', 'value': -1},
             ''
-            'e': {'topic': 'group4', 'value': 1},
-            'd': {'topic': 'group4', 'value': 0},
-            'c': {'topic': 'group4', 'value': -1},
+            'e': {'topic': 'group3', 'value': 1},
+            'd': {'topic': 'group3', 'value': 0},
+            'c': {'topic': 'group3', 'value': -1},
 
-            'r': {'topic': 'group3', 'value': 1},
-            'f': {'topic': 'group3', 'value': 0},
-            'v': {'topic': 'group3', 'value': -1},
+            'r': {'topic': 'group4', 'value': 1},
+            'f': {'topic': 'group4', 'value': 0},
+            'v': {'topic': 'group4', 'value': -1},
             
         }
         
@@ -89,8 +89,8 @@ class KeyboardControlNode(Node):
         self.get_logger().info('Key mappings:')
         self.get_logger().info('  Group 1 (q=1, a=0, z=-1) -> /keyboard/group1 (no motor)')
         self.get_logger().info('  Group 2 (w=1, s=0, x=-1) -> /keyboard/group2 + Motor A')        
-        self.get_logger().info('  Group 4 (e=1, d=0, c=-1) -> /keyboard/group3 + Motor B')
-        self.get_logger().info('  Group 3 (r=1, f=0, v=-1) -> /keyboard/group4 (no motor)')
+        self.get_logger().info('  Group 3 (e=1, d=0, c=-1) -> /keyboard/group3 + Motor B')
+        self.get_logger().info('  Group 4 (r=1, f=0, v=-1) -> /keyboard/group4 (no motor)')
         self.get_logger().info('Motor Control: 1=Forward, 0=Stop, -1=Reverse')
         self.get_logger().info('Press ESC or Ctrl+C to quit')
         
